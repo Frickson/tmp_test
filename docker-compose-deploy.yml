@@ -6,8 +6,8 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ichijou1234
-    env_file:
-      - ./environments/db.env
+    # env_file:
+    #   - ./environments/db.env
     ports:
       - 3306:3306
     volumes:
@@ -43,54 +43,54 @@ services:
   authapi:
     image: cb/authapi
     restart: always
-    env_file:
-      - ./environments/node.env
-      - ./environments/db.env
-      - ./environments/email.env
+    # env_file:
+    #   - ./environments/node.env
+    #   - ./environments/db.env
+    #   - ./environments/email.env
     depends_on:
       - dbserver
 
   userapi:
     image: cb/userapi
     restart: always
-    env_file:
-      - ./environments/node.env
-      - ./environments/db.env
+    # env_file:
+    #   - ./environments/node.env
+    #   - ./environments/db.env
     depends_on:
       - dbserver
 
   livechatapi:
     image: cb/livechatapi
     restart: always
-    env_file:
-      - ./environments/node.env
-      - ./environments/db.env
+    # env_file:
+    #   - ./environments/node.env
+    #   - ./environments/db.env
     depends_on:
       - dbserver
 
   socketserver:
     image: cb/socketserver
     restart: always
-    env_file:
-      - ./environments/node.env
-      - ./environments/db.env
+    # env_file:
+    #   - ./environments/node.env
+    #   - ./environments/db.env
     depends_on:
       - dbserver
 
   videoserver:
     image: cb/videoserver
     restart: always
-    env_file:
-      - ./environments/node.env
+    # env_file:
+    #   - ./environments/node.env
     depends_on:
       - dbserver
 
   chatbotapi:
     image: cb/chatbotapi
     restart: always
-    env_file:
-      - ./environments/node.env
-      - ./environments/db.env
+    # env_file:
+    #   - ./environments/node.env
+    #   - ./environments/db.env
     depends_on:
       - dbserver
       - mongoserver
