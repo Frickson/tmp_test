@@ -1,0 +1,13 @@
+language: "en"
+
+pipeline:
+- name: "SpacyNLP"
+- name: "SpacyTokenizer"
+- name: "SpacyFeaturizer"
+- name: "RegexFeaturizer"
+- name: "CRFEntityExtractor"
+- name: "EntitySynonymMapper"
+- name: "SklearnIntentClassifier"
+- name: "spacy_sklearn"
+- name: "ner_duckling"
+  dimensions: ["time", "number", "amount-of-money", "distance"]

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0, shrink-to-fit=no")
+        meta(name="theme-color", content="#000000")
+        title Admin Page
+    body
+        #root Admin Page Pls #{livechatId}
+        button#clickclick ClickToSendMsgToClient
+
+        script(type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js")
+        script(type="text/javascript").
+            var livechatSocket = io.connect('https://localhost/lcIO')
+
+            var adminSocketId = ''
+            var livechatId = 'QRdCHThaReh4vgQwuqN71LWBopF12ufXRAfcoSvzMGLRM7Cn6' // hardcoded
+            var username = 'IchiJou' // hardcoded
+            var adminuserId = '73' // hardcoded
+            var clientList = []
+
+            livechatSocket.on('connect', () => {
+                // firstly, this admin will ask to join its livechat room
+                // by giving the livechat project uuid
+                livechatSocket.emit('admin_join_room', {roomId: livechatId, username: username, userid: adminuserId})
+
+                // waiting for confirmation for joining room
+                livechatSocket.on('admin_joined', (data)=>{
+                    adminSocketId = data.socketId
+                    console.log('successfully joined the room liao')
+                    console.log(adminSocketId)
+                })
+
+                // admin constantly listening for new update of client list
+                livechatSocket.on('clientlist_update', (data)=>{
+                    clientList = data.clientsInfo
+                    console.log(clientList)
+                })
+
+                // waiting for any clients to send me some msg
+                livechatSocket.on('admin_receiving_msg', (data) => {
+                    console.log(data)
+                })
+
+            })
+
+            var clicktosendclient = () => {
+
+                if(clientList.length > 0) {
+                    livechatSocket.emit('admin_send_client_msg', {
+                        clientSocketId: clientList[0].clientSocketId,
+                        clientUsername: clientList[0].clientName,
+                        username: username,
+                        userid: adminuserId,
+                        msg: 'hey just send for fun'
+                    })
+                }
+
+            }
+
+            document.getElementById("clickclick").onclick = clicktosendclient
+
+
+

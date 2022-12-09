@@ -1,0 +1,19 @@
+{
+    "name": "fileserver",
+    "version": "0.1.0",
+    "description": "file server for storing images, files and etc",
+    "main": "./src/index.js",
+    "scripts": {
+        "start": "node ./src/index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "ichijou",
+    "license": "ISC",
+    "dependencies": {
+        "cors": "^2.8.4",
+        "express": "^4.16.2",
+        "express-fileupload": "^0.3.0",
+        "express-validator": "^4.3.0",
+        "superagent": "^3.8.2"
+    }
+}

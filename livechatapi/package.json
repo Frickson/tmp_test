@@ -1,0 +1,21 @@
+{
+    "name": "livechatapi",
+    "version": "0.1.0",
+    "description": "live chat project api",
+    "main": "./src/index.js",
+    "scripts": {
+        "start": "node ./src/index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "ichijou",
+    "license": "ISC",
+    "dependencies": {
+        "bs58": "^4.0.1",
+        "cors": "^2.8.4",
+        "express": "^4.16.2",
+        "express-validator": "^4.3.0",
+        "jsonwebtoken": "^8.1.0",
+        "mysql": "^2.15.0",
+        "uuid": "^3.1.0"
+    }
+}

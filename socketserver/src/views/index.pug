@@ -1,0 +1,17 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width,initial-scale=1,shrink-to-fit=no')
+    meta(name='theme-color', content='#000000')
+    link(rel='manifest', href='/chatbox/manifest.json')
+    link(rel='shortcut icon', href='/chatbox/avatarpic.ico')
+    title NEC Chatbot
+    link(href='/chatbox/static/css/main.5de6eea5.css', rel='stylesheet')
+  body
+    noscript You need to enable JavaScript to run this app.
+    video#videoPlayer(width='720', height='480', controls='')
+      source(src='/vid/stream', type='video/mp4')
+    #root
+    script(type='text/javascript', src='/chatbox/static/js/main.e780f714.js')
+    script window.RenderApp("#{chatbotId}","#{livechatId}")

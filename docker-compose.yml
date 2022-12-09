@@ -1,0 +1,180 @@
+version: '3'
+
+services:
+#  duckling:
+#    image: rasa/duckling
+#    restart: always
+#    expose:
+#      - 8000
+
+  dbserver:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ichijou1234
+    env_file:
+      - ./environments/db.env
+    ports:
+      - 3306
+    volumes:
+      - mysqlvolume:/var/lib/mysql
+#    container_name: dbserver
+    
+  phpmyadmin:
+    image:  phpmyadmin/phpmyadmin
+    restart: always
+    links: 
+      - dbserver:db
+    environment:
+      MYSQL_ROOT_PASSWORD: ichijou1234
+    env_file:
+      - ./environments/db.env
+    ports:
+      - 8000:80
+
+
+#  mongoserver:
+#    image: mongo
+#    restart: always
+#    ports:
+#      - 27017:27017
+#    volumes:
+#      - mongovolume:/data/db
+
+  fileserver:
+    image: cb/fileserver
+    build: ./fileserver
+    restart: always
+    volumes:
+      - filestoragevol:/home/node/app/static
+
+  webserver:
+    image: cb/webserver
+    build: ./webserver
+    restart: always
+    ports:
+      - 81:80
+      - 443:443
+    depends_on:
+      - authapi
+      - livechatapi
+      - socketserver
+    volumes:
+      - filestoragevol:/filestorage
+    env_file:
+      - ./environments/node.env
+      - ./environments/db.env
+#    container_name: webserver
+
+  authapi:
+    image: cb/authapi
+    build: ./authapi
+    restart: always
+    env_file:
+      - ./environments/node.env
+      - ./environments/db.env
+      - ./environments/email.env
+    depends_on:
+      - dbserver
+    volumes:
+      - ./authapi/src:/home/node/app/src
+
+  userapi:
+    image: cb/userapi
+    build: ./userapi
+    restart: always
+    env_file:
+      - ./environments/node.env
+      - ./environments/db.env
+    depends_on:
+      - dbserver
+    volumes:
+      - ./userapi/src:/home/node/app/src
+
+  livechatapi:
+    image: cb/livechatapi
+    build: ./livechatapi
+    restart: always
+    env_file:
+      - ./environments/node.env
+      - ./environments/db.env
+    depends_on:
+      - dbserver
+    volumes:
+      - ./livechatapi/src:/home/node/app/src
+
+  socketserver:
+    image: cb/socketserver
+    build: ./socketserver
+    restart: always
+    env_file:
+      - ./environments/node.env
+      - ./environments/db.env
+    depends_on:
+      - dbserver
+    volumes:
+      - ./socketserver/src:/home/node/app/src
+
+  videoserver:
+    image: cb/videoserver
+    build: ./videoserver
+    restart: always
+    env_file:
+      - ./environments/node.env
+    depends_on:
+      - dbserver
+    volumes:
+      - ./videoserver/src:/home/node/app/src
+
+  chatbotapi:
+    image: cb/chatbotapi
+    build: ./chatbotapi
+    restart: always
+    env_file:
+      - ./environments/node.env
+      - ./environments/db.env
+    depends_on:
+      - dbserver
+#      - mongoserver
+    volumes:
+      - ./chatbotapi/src:/home/node/app/src
+#    container_name: chatbotapi
+
+  nluengine:
+    image: cb/nluengine
+    build: ./nluengine
+    restart: always
+    ports:
+      - 5000:5000
+    volumes:
+      - nluprojsvol:/usr/src/projects
+#    container_name: nluengine
+    
+  coreengine:
+    image: cb/coreengine
+    build: ./coreengine
+    restart: always
+    volumes:
+      - dialoguesvol:/app/dialogues
+      - nluprojsvol:/nluprojects
+      - ./coreengine/src:/usr/src
+#    container_name: coreengine
+
+  trainengine:
+    image: cb/trainengine
+    build: ./coreengine
+    restart: always
+    ports:
+      - 8099
+    volumes:
+      - dialoguesvol:/app/dialogues
+      - nluprojsvol:/nluprojects
+      - ./coreengine/src:/usr/src
+#    container_name: trainengine
+
+volumes:
+#  mongovolume:
+  mysqlvolume:
+  filestoragevol:
+  nluprojsvol:
+  dialoguesvol:

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0, shrink-to-fit=no")
+        meta(name="theme-color", content="#000000")
+        title LiveChat
+    body
+        #root #{livechatId}
+
+        script(type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js")
+        button#clickclick ClickToSendMsgToAdmin
+
+        script(type="text/javascript").
+            var livechatSocket = io.connect('https://localhost/lcIO')
+
+            var socketId = ''
+            var livechatId = '#{livechatId}'
+            var username = 'Anonymous1'
+            var message = 'problem with something'
+            var attentionLevel = 1 // 0 or 1
+            var currentAdmin = ''
+
+            livechatSocket.on('connect', () => {
+
+                // firstly, this client will ask to join this room
+                // by giving the livechat project uuid
+                livechatSocket.emit('client_join_room', {
+                    roomId: livechatId, 
+                    username: username, 
+                    message: message, 
+                    attentionLevel: attentionLevel
+                })
+
+                // waiting for confirmation for joining room
+                livechatSocket.on('client_joined', (data)=>{
+                    socketId = data.socketId
+                    console.log('successfully joined the room liao')
+                    console.log(socketId)
+                })
+
+                // waiting for admin to send me some msg
+                livechatSocket.on('client_receiving_msg', (data) => {
+                    currentAdmin = data.adminUsername
+                    console.log(data)
+                })
+
+            })
+
+            var clickToSendAdmin = () => {
+
+                if(currentAdmin) {
+                    livechatSocket.emit('client_send_admin_msg', {
+                        clientSocketId: socketId,
+                        clientUsername: username,
+                        adminUsername: currentAdmin,
+                        msg: 'client reply liao... kekekek'
+                    })
+                }
+
+            }
+
+            document.getElementById("clickclick").onclick = clickToSendAdmin

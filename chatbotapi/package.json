@@ -1,0 +1,25 @@
+{
+    "name": "chatbotapi",
+    "version": "0.1.0",
+    "description": "chatbot api for intents training, dialogue training, and chatbot actions query",
+    "main": "./src/index.js",
+    "scripts": {
+        "start": "node ./src/index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "ichijou",
+    "license": "ISC",
+    "dependencies": {
+        "bs58": "^4.0.1",
+        "cors": "^2.8.4",
+        "express": "^4.16.2",
+        "express-validator": "^4.3.0",
+        "ip-range-check": "^0.2.0",
+        "json2md": "^1.5.10",
+        "jsonwebtoken": "^8.1.0",
+        "mongodb": "^3.0.0-rc0",
+        "mysql": "^2.15.0",
+        "superagent": "^3.8.2",
+        "uuid": "^3.1.0"
+    }
+}

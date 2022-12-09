@@ -1,0 +1,11 @@
+FROM nginx:1.12.1
+
+RUN rm /etc/nginx/conf.d/*
+
+ADD ATFM/cert.crt      /etc/ssl/certs/
+ADD ATFM/cert.key      /etc/ssl/private/
+ADD ATFM/proxy.conf    /etc/nginx/conf.d/
+ADD homepage                        						 /home/homepage/
+ADD chatbox                        							 /home/chatbox/
+
+#ADD certs/dhparam.pem               /etc/ssl/certs/

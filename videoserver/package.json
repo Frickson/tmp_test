@@ -1,0 +1,16 @@
+{
+  "name": "videoserver",
+  "version": "0.5.0",
+  "description": "simple video streaming server",
+  "main": "./src/index.js",
+  "scripts": {
+    "start": "node ./src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ichijou",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.4",
+    "express": "^4.16.2"
+  }
+}
