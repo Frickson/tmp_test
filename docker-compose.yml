@@ -12,8 +12,8 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ichijou1234
-    # env_file:
-    #   - ./environments/db.env
+    env_file:
+      - ./environments/db.env
     ports:
       - 3306
     volumes:
@@ -27,8 +27,8 @@ services:
       - dbserver:db
     environment:
       MYSQL_ROOT_PASSWORD: ichijou1234
-    # env_file:
-    #   - ./environments/db.env
+    env_file:
+      - ./environments/db.env
     ports:
       - 8000:80
 
@@ -61,19 +61,19 @@ services:
       - socketserver
     volumes:
       - filestoragevol:/filestorage
-    # env_file:
-    #   - ./environments/node.env
-    #   - ./environments/db.env
+    env_file:
+      - ./environments/node.env
+      - ./environments/db.env
 #    container_name: webserver
 
   authapi:
     image: cb/authapi
     build: ./authapi
     restart: always
-    # env_file:
-    #   - ./environments/node.env
-    #   - ./environments/db.env
-    #   - ./environments/email.env
+    env_file:
+      - ./environments/node.env
+      - ./environments/db.env
+      - ./environments/email.env
     depends_on:
       - dbserver
     volumes:
@@ -83,9 +83,9 @@ services:
     image: cb/userapi
     build: ./userapi
     restart: always
-    # env_file:
-    #   - ./environments/node.env
-    #   - ./environments/db.env
+    env_file:
+      - ./environments/node.env
+      - ./environments/db.env
     depends_on:
       - dbserver
     volumes:
@@ -95,9 +95,9 @@ services:
     image: cb/livechatapi
     build: ./livechatapi
     restart: always
-    # env_file:
-    #   - ./environments/node.env
-    #   - ./environments/db.env
+    env_file:
+      - ./environments/node.env
+      - ./environments/db.env
     depends_on:
       - dbserver
     volumes:
@@ -107,9 +107,9 @@ services:
     image: cb/socketserver
     build: ./socketserver
     restart: always
-    # env_file:
-    #   - ./environments/node.env
-    #   - ./environments/db.env
+    env_file:
+      - ./environments/node.env
+      - ./environments/db.env
     depends_on:
       - dbserver
     volumes:
@@ -119,8 +119,8 @@ services:
     image: cb/videoserver
     build: ./videoserver
     restart: always
-    # env_file:
-    #   - ./environments/node.env
+    env_file:
+      - ./environments/node.env
     depends_on:
       - dbserver
     volumes:
@@ -130,9 +130,9 @@ services:
     image: cb/chatbotapi
     build: ./chatbotapi
     restart: always
-    # env_file:
-    #   - ./environments/node.env
-    #   - ./environments/db.env
+    env_file:
+      - ./environments/node.env
+      - ./environments/db.env
     depends_on:
       - dbserver
 #      - mongoserver
