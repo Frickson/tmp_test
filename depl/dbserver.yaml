@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dbserver
+  name: dbserver
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: dbserver
+  template:
+    metadata:
+      labels:
+        app: dbserver
+    spec:
+      containers:
+      - env:
+        - name: MAMONGO_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: MAMONGO_HOST
+              name: db-env
+        - name: MASQL_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: MASQL_HOST
+              name: db-env
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              key: MYSQL_DATABASE
+              name: db-env
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: MYSQL_PASSWORD
+              name: db-env
+        - name: MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              key: MYSQL_USER
+              name: db-env
+        image: mariadb:latest
+        name: dbserver
+        ports:
+        - containerPort: 3306
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysqlvolume
+      restartPolicy: Always
+      volumes:
+      - name: mysqlvolume
+        persistentVolumeClaim:
+          claimName: mysqlvolume
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: dbserver
+  name: dbserver
+spec:
+  ports:
+  - name: "3306"
+    port: 3306
+    targetPort: 3306
+  selector:
+    app: dbserver
+status:
+  loadBalancer: {}
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: dbserver #mysqlvolume
+  name: mysqlvolume
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+status: {}

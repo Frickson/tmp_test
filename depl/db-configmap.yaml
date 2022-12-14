@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  MAMONGO_HOST: mongoserver
+  MASQL_HOST: dbserver
+  MYSQL_DATABASE: NECAIDB
+  MYSQL_PASSWORD: NECAIDBuser20171020
+  MYSQL_USER: necaidbuser
+kind: ConfigMap
+metadata:
+  name: db-env

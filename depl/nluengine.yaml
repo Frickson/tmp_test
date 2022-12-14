@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nluengine
+  name: nluengine
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nluengine
+  template:
+    metadata:
+      labels:
+        app: nluengine
+    spec:
+      containers:
+      - image: huangzherui/cbengine #msbunecsc/nluengine
+        name: nluengine
+        ports:
+        - containerPort: 5000
+        resources: {}
+        volumeMounts:
+        - mountPath: /usr/src/projects
+          name: nluprojsvol
+      restartPolicy: Always
+      volumes:
+      - name: nluprojsvol
+        persistentVolumeClaim:
+          claimName: nluprojsvol
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nluengine
+  name: nluengine
+spec:
+  ports:
+  - name: "5000"
+    port: 5000
+    targetPort: 5000
+  selector:
+    app: nluengine
+status:
+  loadBalancer: {}
+
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: nluengine #nluprojsvol
+  name: nluprojsvol
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+status: {}

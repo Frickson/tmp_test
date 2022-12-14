@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webserver
+  name: webserver
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: webserver
+  template:
+    metadata:
+      labels:
+        app: webserver
+    spec:
+      containers:
+      - env:
+        - name: MAMONGO_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: MAMONGO_HOST
+              name: db-env
+        - name: MASQL_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: MASQL_HOST
+              name: db-env
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              key: MYSQL_DATABASE
+              name: db-env
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: MYSQL_PASSWORD
+              name: db-env
+        - name: MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              key: MYSQL_USER
+              name: db-env
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              key: NODE_ENV
+              name: node-env
+        - name: jwtSecret
+          valueFrom:
+            configMapKeyRef:
+              key: jwtSecret
+              name: node-env
+        image: msbunecsc/cb-webserver
+        name: webserver
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        resources: {}
+        volumeMounts:
+        - mountPath: /filestorage
+          name: filestoragevol
+      restartPolicy: Always
+      volumes:
+      - name: filestoragevol
+        persistentVolumeClaim:
+          claimName: filestoragevol
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: webserver
+  name: webserver
+spec:
+  ports:
+  - name: "http"
+    port: 81
+    targetPort: 80
+  - name: "https"
+    port: 443
+    targetPort: 443
+  selector:
+    app: webserver
+status:
+  loadBalancer: {}

@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: coreengine
+  name: coreengine
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: coreengine
+  template:
+    metadata:
+      labels:
+        app: coreengine
+    spec:
+      containers:
+      - image: msbunecsc/cb-coreengine
+        name: coreengine
+        resources: {}
+        volumeMounts:
+        - mountPath: /app/dialogues
+          name: dialoguesvol
+        - mountPath: /nluprojects
+          name: nluprojsvol
+        - mountPath: /usr/src
+          name: coreengine-claim2
+      restartPolicy: Always
+      volumes:
+      - name: dialoguesvol
+        persistentVolumeClaim:
+          claimName: dialoguesvol
+      - name: nluprojsvol
+        persistentVolumeClaim:
+          claimName: nluprojsvol
+      - name: coreengine-claim2
+        persistentVolumeClaim:
+          claimName: coreengine-claim2
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: coreengine
+  name: coreengine
+spec:
+  clusterIP: None
+  ports:
+  - name: headless
+    port: 55555
+    targetPort: 0
+  selector:
+    app: coreengine
+status:
+  loadBalancer: {}
+
+
+---
+
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: coreengine
+  name: coreengine-claim2
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+status: {}

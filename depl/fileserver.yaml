@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: fileserver
+  name: fileserver
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: fileserver
+  template:
+    metadata:
+      labels:
+        app: fileserver
+    spec:
+      containers:
+      - image: msbunecsc/cb-fileserver
+        name: fileserver
+        resources: {}
+        volumeMounts:
+        - mountPath: /home/node/app/static
+          name: filestoragevol
+      restartPolicy: Always
+      volumes:
+      - name: filestoragevol
+        persistentVolumeClaim:
+          claimName: filestoragevol
+status: {}
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: fileserver
+  name: fileserver
+spec:
+  clusterIP: None
+  ports:
+  - name: headless
+    port: 55555
+    targetPort: 0
+  selector:
+    app: fileserver
+status:
+  loadBalancer: {}
+
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: fileserver
+  name: filestoragevol
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+status: {}

@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: trainengine
+  name: trainengine
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: trainengine
+  template:
+    metadata:
+      labels:
+        app: trainengine
+    spec:
+      containers:
+      - image: msbunecsc/cb-trainengine
+        name: trainengine
+        ports:
+        - containerPort: 8099
+        resources: {}
+        volumeMounts:
+        - mountPath: /app/dialogues
+          name: dialoguesvol
+        - mountPath: /nluprojects
+          name: nluprojsvol
+        - mountPath: /usr/src
+          name: trainengine-claim2
+      restartPolicy: Always
+      volumes:
+      - name: dialoguesvol
+        persistentVolumeClaim:
+          claimName: dialoguesvol
+      - name: nluprojsvol
+        persistentVolumeClaim:
+          claimName: nluprojsvol
+      - name: trainengine-claim2
+        persistentVolumeClaim:
+          claimName: trainengine-claim2
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: trainengine
+  name: trainengine
+spec:
+  ports:
+  - name: "8099"
+    port: 8099
+    targetPort: 8099
+  selector:
+    app: trainengine
+status:
+  loadBalancer: {}
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: trainengine
+  name: trainengine-claim2
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+status: {}

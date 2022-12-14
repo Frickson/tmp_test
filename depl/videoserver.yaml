@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: videoserver
+  name: videoserver
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: videoserver
+  template:
+    metadata:
+      labels:
+        app: videoserver
+    spec:
+      containers:
+      - env:
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              key: NODE_ENV
+              name: node-env
+        - name: jwtSecret
+          valueFrom:
+            configMapKeyRef:
+              key: jwtSecret
+              name: node-env
+        image: msbunecsc/cb-videoserver
+        name: videoserver
+        resources: {}
+        volumeMounts:
+        - mountPath: /home/node/app/src
+          name: videoserver-claim0
+      restartPolicy: Always
+      volumes:
+      - name: videoserver-claim0
+        persistentVolumeClaim:
+          claimName: videoserver-claim0
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: videoserver
+  name: videoserver
+spec:
+  clusterIP: None
+  ports:
+  - name: headless
+    port: 55555
+    targetPort: 0
+  selector:
+    app: videoserver
+status:
+  loadBalancer: {}
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: videoserver
+  name: videoserver-claim0
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+status: {}
